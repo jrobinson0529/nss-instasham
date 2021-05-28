@@ -3,7 +3,10 @@ import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import { Heart, MoreHorizontal } from 'react-feather';
 import { useHistory, useLocation } from 'react-router-dom';
-import { ListGroup, ListGroupItem, UncontrolledPopover } from 'reactstrap';
+import {
+  Button, ListGroup, ListGroupItem, UncontrolledPopover
+} from 'reactstrap';
+import { signOutUser } from '../../helpers/auth';
 import { heartPost, unheartPost, userLikesPost } from '../../helpers/heartHelper';
 import { deletePost } from '../../helpers/postHelper';
 import { getCurrentUsersUid, getUserByUid } from '../../helpers/userHelper';
@@ -55,6 +58,7 @@ const PostDetailCard = ({
   return (
     <>
       <div id={postInfo.firebaseKey} className={`details-card ${withBorder ? 'details-card-withborder' : ''}`}>
+        <Button onClick={signOutUser}>SIGNOUT</Button>
         <div className='details-card-user'>
           <UserInfo
             goToProfile={goToProfile}
