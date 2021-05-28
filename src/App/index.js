@@ -1,29 +1,47 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import firebase from 'firebase';
+import { BrowserRouter as Router } from 'react-router-dom';
 import {
-  ProfileInfo,
   AppNavbar,
-  PostDetailsCard,
-  PostGrid,
-  UsersList
 } from '../components/instasham-design-system';
 import './App.scss';
-import POSTJSON from '../sample_json/posts.json';
-import USERJSON from '../sample_json/users.json';
+import { createUser, getUserByUid, getUsers } from '../helpers/userHelper';
+import Routes from '../helpers/Routes';
 
 function App() {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    firebase.auth().onAuthStateChanged((authed) => {
+      if (authed) {
+        const userInfo = {
+          fullName: authed.displayName,
+          username: authed.email.split('@')[0],
+          uid: authed.uid,
+          bio: '',
+          profileImage: authed.photoURL,
+        };
+        getUsers().then((response) => {
+          const userExists = response.filter((object) => object.uid === userInfo.uid);
+          if (userExists.length === 0) {
+            createUser(userInfo);
+          } else {
+            getUserByUid(userExists[0].uid).then(setUser);
+          }
+        });
+      } else if (user || user === null) {
+        setUser(false);
+      }
+    });
+  }, []);
   return (
     <>
-      <AppNavbar userInfo={{ username: 'asd' }} />
-      <div className='app-container'>
-        <h2>UserList</h2>
-        <UsersList userList={Object.values(USERJSON)} />
-        <h2>ProfileInfo</h2>
-        <ProfileInfo postsCount={10} followerCount={10} followingCount={10} fullName='test' bio='asdasdasdasd' isUser={false} />
-        <h2>PostDetailsCard</h2>
-        <PostDetailsCard postInfo={Object.values(POSTJSON)[0]} />
-        <h2>PostGrid</h2>
-        <PostGrid posts={Object.values(POSTJSON)} />
-      </div>
+    <div className='app-container'>
+     <Router>
+      <AppNavbar userInfo={user} />
+      <Routes user={user} />
+     </Router>
+     </div>
     </>
   );
 }
