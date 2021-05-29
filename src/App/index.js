@@ -34,11 +34,12 @@ function App() {
       }
     });
   }, []);
+  console.warn(user);
   return (
     <>
+    <AppNavbar userInfo={user && user} />
     <div className='app-container'>
      <Router>
-      <AppNavbar userInfo={user} />
       <Routes user={user} />
      </Router>
      </div>
