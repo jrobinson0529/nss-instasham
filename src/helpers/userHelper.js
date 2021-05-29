@@ -6,7 +6,7 @@ const dbURL = firebaseConfig.databaseURL;
 const getCurrentUsersUid = () => firebase.auth().currentUser?.uid;
 const getUserByUid = (uid) => new Promise((resolve, reject) => {
   axios.get(`${dbURL}/users.json?orderBy="uid"&equalTo="${uid}"`)
-    .then((response) => resolve(response.data))
+    .then((response) => resolve(Object.values(response.data)[0]))
     .catch((error) => reject(error));
 });
 
